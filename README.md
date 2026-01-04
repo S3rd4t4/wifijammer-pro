@@ -1,11 +1,10 @@
+![img alt](https://github.com/S3rd4t4/wifijammer-pro/blob/f1885b547f1bc711b8487a60008b0d3a84889667/img.png)
 # WiFiJammer Pro
 
 A professional WiFi deauthentication tool for authorized security testing and penetration testing.
 
 ![Python Version](https://img.shields.io/badge/python-3.6%2B-blue)
 ![License](https://img.shields.io/badge/license-BSD--3--Clause-green)
-
-![img alt](https://github.com/S3rd4t4/wifijammer-pro/blob/f1885b547f1bc711b8487a60008b0d3a84889667/img.png)
 
 ## ⚠️ Legal Disclaimer
 
