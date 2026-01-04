@@ -5,6 +5,8 @@ A professional WiFi deauthentication tool for authorized security testing and pe
 ![Python Version](https://img.shields.io/badge/python-3.6%2B-blue)
 ![License](https://img.shields.io/badge/license-BSD--3--Clause-green)
 
+![img alt](https://github.com/S3rd4t4/wifijammer-pro/blob/f1d8d6b9e74b3a7dd74f15446cabbb6c5428c397/wifjammer-pro.png)
+
 ## ⚠️ Legal Disclaimer
 
 **THIS TOOL IS FOR EDUCATIONAL AND AUTHORIZED SECURITY TESTING ONLY.**
