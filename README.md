@@ -1,5 +1,5 @@
 ![img alt](https://github.com/S3rd4t4/wifijammer-pro/blob/f1885b547f1bc711b8487a60008b0d3a84889667/img.png)
-# WiFiJammer-PRO
+# wifijammer-pro
 
 A professional WiFi deauthentication tool for authorized security testing and penetration testing.
 
