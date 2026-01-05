@@ -155,7 +155,7 @@ def get_protocol_color(protocol):
         return c.WHITE
 
 # Channel definitions
-CHANNELS_24GHZ = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+CHANNELS_24GHZ = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
 CHANNELS_5GHZ = [36, 40, 44, 48, 52, 56, 60, 64, 100, 104, 108, 112,
                  116, 120, 124, 128, 132, 136, 140, 144, 149, 153, 157, 161, 165]
 CHANNELS_ALL = CHANNELS_24GHZ + CHANNELS_5GHZ
