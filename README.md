@@ -172,7 +172,7 @@ num_workers = 3                # Worker threads
 ### Channel Configuration
 
 ```python
-CHANNELS_24GHZ = [1-14]        # 2.4 GHz channels
+CHANNELS_24GHZ = [1-13]        # 2.4 GHz channels
 CHANNELS_5GHZ = [36-165]       # 5 GHz channels
 ```
 
