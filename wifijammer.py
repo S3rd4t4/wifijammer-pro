@@ -14,7 +14,7 @@ Features:
 - Adaptive channel hopping
 - Client targeting (broadcast + directed deauth)
 - Display filters (Jamming Only, All Devices, APs Only, Clients Only)
-- Multiple attack presets (Stealthy, Balanced, Aggressive, Overwhelming, Custom)
+- Multiple attack presets with realistic hardware-optimized values
 - WPA2/WPA3 network support
 - 2.4GHz and 5GHz band support
 - MAC vendor identification
@@ -239,6 +239,10 @@ class PacketRateTracker:
             return total
 
 # DEAUTH PRESETS
+# Updated with realistic hardware limitations:
+# - Scapy's sendp() minimum reliable delay: ~0.001s
+# - Values below 0.001s cause unpredictable timing
+# - Recommended: 0.01s+ for stability
 DEAUTH_PRESETS = {
     '1': {
         'name': 'Stealthy',
@@ -261,8 +265,8 @@ DEAUTH_PRESETS = {
     '3': {
         'name': 'Aggressive',
         'description': 'High intensity, fast disconnect',
-        'packets': 25,
-        'delay': 0.005,
+        'packets': 15,
+        'delay': 0.01,
         'code': 7,
         'disas': True,
         'color': c.BRIGHT_YELLOW
@@ -270,8 +274,8 @@ DEAUTH_PRESETS = {
     '4': {
         'name': 'Overwhelming',
         'description': 'Maximum power, total denial',
-        'packets': 50,
-        'delay': 0.001,
+        'packets': 25,
+        'delay': 0.005,
         'code': 2,
         'disas': True,
         'color': c.BRIGHT_RED
