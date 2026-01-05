@@ -34,9 +34,11 @@ Unauthorized use of this tool to disrupt WiFi networks may violate:
 ### Attack Presets
 1. **Stealthy** - Low intensity, hard to detect (3 packets, 0.5s delay)
 2. **Balanced** - Recommended for most scenarios (10 packets, 0.01s delay)
-3. **Aggressive** - High intensity, fast disconnect (25 packets, 0.005s delay)
-4. **Overwhelming** - Maximum power, total denial (50 packets, 0.001s delay)
+3. **Aggressive** - High intensity, fast disconnect (15 packets, 0.01s delay)
+4. **Overwhelming** - Maximum power, total denial (25 packets, 0.005s delay)
 5. **Custom** - Manual configuration
+
+*Note: Presets optimized for Scapy's reliable minimum delay (0.001s). Values are hardware-tested for stability.*
 
 ### Display Filters
 Press `F` during attack to cycle through filters:
@@ -250,6 +252,12 @@ sudo aireplay-ng --test wlan0mon
 - Multiple reason codes
 - Adaptive channel switching
 
+### Hardware Optimization
+- Presets optimized for Scapy sendp() timing constraints
+- Minimum reliable delay: 0.001s (values below are unpredictable)
+- Recommended delay: 0.01s+ for maximum stability
+- Tested on Alfa AWUS036ACH (rtl8812au chipset)
+
 ## Supported Adapters
 
 ### Confirmed Working
@@ -314,12 +322,12 @@ With conditions:
 
 ## Changelog
 
-### Version 1.0 (2026-01-04)
+### Version 1.0 (2026-01-05)
 - Initial public release
 - Multi-threaded attack engine
 - Display filters (F key)
 - Channel mode selection
-- Attack presets
+- Hardware-optimized attack presets (updated for Scapy stability)
 - MAC vendor identification
 - Real-time statistics
 - Automatic dependency installation
