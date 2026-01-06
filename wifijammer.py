@@ -262,7 +262,7 @@ DEAUTH_PRESETS = {
         'name': 'Aggressive',
         'description': 'High intensity, fast disconnect',
         'packets': 25,
-        'delay': 0.005,
+        'delay': 0.05,
         'code': 7,
         'disas': True,
         'color': c.BRIGHT_YELLOW
