@@ -37,9 +37,9 @@ Unauthorized use of this tool to disrupt WiFi networks may violate:
 
 ### Attack Presets
 1. **Stealthy** - Low intensity, hard to detect (3 packets, 0.5s delay)
-2. **Balanced** - Recommended for most scenarios (10 packets, 0.01s delay)
-3. **Aggressive** - High intensity, fast disconnect (15 packets, 0.01s delay)
-4. **Overwhelming** - Maximum power, total denial (25 packets, 0.005s delay)
+2. **Balanced** - Recommended for most scenarios (25 packets, 0.1s delay)
+3. **Aggressive** - High intensity, fast disconnect (25 packets, 0.05s delay)
+4. **Overwhelming** - Maximum power, total denial (50 packets, 0.001s delay)
 5. **Custom** - Manual configuration
 
 *Note: Presets optimized for Scapy's reliable minimum delay (0.001s). Values are hardware-tested for stability.*
