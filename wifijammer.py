@@ -538,7 +538,7 @@ def spoof_mac(iface):
     spoofed_mac = generate_random_mac()
 
     print(f"[{c.ORANGE}*{c.RESET}] Spoofing MAC address...")
-    print(f"  Original: {c.BRIGHT_YELLOW}{mask_mac_address(original_mac)}{c.RESET}")
+    print(f"  Original: {c.BRIGHT_YELLOW}<redacted>{c.RESET}")
     print(f"  Spoofed:  {c.BRIGHT_GREEN}{spoofed_mac}{c.RESET}")
 
     try:
