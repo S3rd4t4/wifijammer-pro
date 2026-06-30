@@ -530,9 +530,6 @@ def generate_random_mac():
 def mask_mac_address(mac):
     if not mac:
         return "<unknown>"
-    parts = mac.split(':')
-    if len(parts) == 6:
-        return f"{parts[0]}:**:**:**:**:{parts[5]}"
     return "<redacted>"
 
 def spoof_mac(iface):
