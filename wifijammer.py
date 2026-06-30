@@ -598,9 +598,8 @@ def select_interface():
     print(f"{c.GRAY}{'─' * 80}{c.RESET}")
 
     for idx, iface in enumerate(ifaces, 1):
-        mac = get_mac_address(iface) or "Unknown"
-        display_mac = mask_mac_address(mac)
-        vendor = get_vendor(mac)[:20] if mac != "Unknown" else "<unknown>"
+        display_mac = "<redacted>"
+        vendor = "<hidden>"
 
         try:
             result = subprocess.run(['iwconfig', iface], capture_output=True, text=True)
