@@ -1554,7 +1554,7 @@ def statistics_display_ansi():
 
         venv_status = f"{c.BRIGHT_GREEN}Active{c.RESET}" if VENV_ACTIVE else f"{c.BRIGHT_RED}Inactive{c.RESET}"
         left1 = f"{c.BRIGHT_CYAN}[→]{c.RESET} {c.ORANGE}[{c.RESET}venv{c.ORANGE}]{c.RESET}:  {venv_status} → {c.GRAY}{venv_path}{c.RESET}"
-        right1 = f"{c.BRIGHT_CYAN}[→]{c.RESET} {c.ORANGE}[{c.RESET}original MAC{c.ORANGE}]{c.RESET}:  {c.GRAY}{original_mac}{c.RESET}"
+        right1 = f"{c.BRIGHT_CYAN}[→]{c.RESET} {c.ORANGE}[{c.RESET}original MAC{c.ORANGE}]{c.RESET}:  {c.GRAY}{mask_mac_address(original_mac)}{c.RESET}"
 
         left1_plain = ansi_escape.sub('', left1)
         right1_plain = ansi_escape.sub('', right1)
