@@ -527,13 +527,21 @@ def generate_random_mac():
     mac[0] = (mac[0] & 0xfe) | 0x02
     return ":".join([f"{b:02x}" for b in mac]).upper()
 
+def mask_mac_address(mac):
+    if not mac:
+        return "<unknown>"
+    parts = mac.split(':')
+    if len(parts) == 6:
+        return f"{parts[0]}:**:**:**:**:{parts[5]}"
+    return "<redacted>"
+
 def spoof_mac(iface):
     global original_mac, spoofed_mac
     original_mac = get_mac_address(iface)
     spoofed_mac = generate_random_mac()
 
     print(f"[{c.ORANGE}*{c.RESET}] Spoofing MAC address...")
-    print(f"  Original: {c.BRIGHT_YELLOW}{original_mac}{c.RESET}")
+    print(f"  Original: {c.BRIGHT_YELLOW}{mask_mac_address(original_mac)}{c.RESET}")
     print(f"  Spoofed:  {c.BRIGHT_GREEN}{spoofed_mac}{c.RESET}")
 
     try:
