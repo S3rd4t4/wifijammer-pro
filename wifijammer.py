@@ -573,6 +573,14 @@ def get_interfaces():
 
     return sorted(set(ifaces))
 
+def mask_mac_address(mac):
+    if not mac or mac == "Unknown":
+        return "Unknown"
+    parts = mac.split(':')
+    if len(parts) == 6:
+        return "**:**:**:**:" + parts[4] + ":" + parts[5]
+    return "Unknown"
+
 def select_interface():
     global mon_iface
     clear_screen()
@@ -590,8 +598,8 @@ def select_interface():
     print(f"{c.GRAY}{'─' * 80}{c.RESET}")
 
     for idx, iface in enumerate(ifaces, 1):
-        mac = get_mac_address(iface) or "Unknown"
-        vendor = get_vendor(mac)[:20] if mac != "Unknown" else "<unknown>"
+        display_mac = "<redacted>"
+        vendor = "<hidden>"
 
         try:
             result = subprocess.run(['iwconfig', iface], capture_output=True, text=True)
@@ -599,7 +607,7 @@ def select_interface():
         except:
             status = f"{c.GRAY}Unknown{c.RESET}"
 
-        print(f"{c.BRIGHT_CYAN}{str(idx).ljust(6)}{c.RESET}{c.BRIGHT_WHITE}{iface.ljust(21)}{c.RESET}{c.BRIGHT_YELLOW}{mac.ljust(21)}{c.RESET}{c.GRAY}{vendor.ljust(25)}{c.RESET}{status}")
+        print(f"{c.BRIGHT_CYAN}{str(idx).ljust(6)}{c.RESET}{c.BRIGHT_WHITE}{iface.ljust(21)}{c.RESET}{c.BRIGHT_YELLOW}{display_mac.ljust(21)}{c.RESET}{c.GRAY}{vendor.ljust(25)}{c.RESET}{status}")
 
     print()
 
