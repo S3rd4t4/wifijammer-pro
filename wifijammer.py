@@ -575,11 +575,8 @@ def get_interfaces():
 
 def mask_mac_address(mac):
     if not mac or mac == "Unknown":
-        return "Unknown"
-    parts = mac.split(':')
-    if len(parts) == 6:
-        return "**:**:**:**:" + parts[4] + ":" + parts[5]
-    return "Unknown"
+        return "<unknown>"
+    return "<redacted>"
 
 def select_interface():
     global mon_iface
