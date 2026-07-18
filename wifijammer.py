@@ -527,18 +527,13 @@ def generate_random_mac():
     mac[0] = (mac[0] & 0xfe) | 0x02
     return ":".join([f"{b:02x}" for b in mac]).upper()
 
-def mask_mac_address(mac):
-    if not mac:
-        return "<unknown>"
-    return "<redacted>"
-
 def spoof_mac(iface):
     global original_mac, spoofed_mac
     original_mac = get_mac_address(iface)
     spoofed_mac = generate_random_mac()
 
     print(f"[{c.ORANGE}*{c.RESET}] Spoofing MAC address...")
-    print(f"  Original: {c.BRIGHT_YELLOW}<redacted>{c.RESET}")
+    print(f"  Original: {c.BRIGHT_YELLOW}{original_mac}{c.RESET}")
     print(f"  Spoofed:  {c.BRIGHT_GREEN}{spoofed_mac}{c.RESET}")
 
     try:
@@ -573,11 +568,6 @@ def get_interfaces():
 
     return sorted(set(ifaces))
 
-def mask_mac_address(mac):
-    if not mac or mac == "Unknown":
-        return "<unknown>"
-    return "<redacted>"
-
 def select_interface():
     global mon_iface
     clear_screen()
@@ -595,8 +585,8 @@ def select_interface():
     print(f"{c.GRAY}{'─' * 80}{c.RESET}")
 
     for idx, iface in enumerate(ifaces, 1):
-        display_mac = "<redacted>"
-        vendor = "<hidden>"
+        mac = get_mac_address(iface) or "Unknown"
+        vendor = get_vendor(mac)[:20] if mac != "Unknown" else "<unknown>"
 
         try:
             result = subprocess.run(['iwconfig', iface], capture_output=True, text=True)
@@ -604,7 +594,7 @@ def select_interface():
         except:
             status = f"{c.GRAY}Unknown{c.RESET}"
 
-        print(f"{c.BRIGHT_CYAN}{str(idx).ljust(6)}{c.RESET}{c.BRIGHT_WHITE}{iface.ljust(21)}{c.RESET}{c.BRIGHT_YELLOW}{display_mac.ljust(21)}{c.RESET}{c.GRAY}{vendor.ljust(25)}{c.RESET}{status}")
+        print(f"{c.BRIGHT_CYAN}{str(idx).ljust(6)}{c.RESET}{c.BRIGHT_WHITE}{iface.ljust(21)}{c.RESET}{c.BRIGHT_YELLOW}{mac.ljust(21)}{c.RESET}{c.GRAY}{vendor.ljust(25)}{c.RESET}{status}")
 
     print()
 
@@ -1551,7 +1541,7 @@ def statistics_display_ansi():
 
         venv_status = f"{c.BRIGHT_GREEN}Active{c.RESET}" if VENV_ACTIVE else f"{c.BRIGHT_RED}Inactive{c.RESET}"
         left1 = f"{c.BRIGHT_CYAN}[→]{c.RESET} {c.ORANGE}[{c.RESET}venv{c.ORANGE}]{c.RESET}:  {venv_status} → {c.GRAY}{venv_path}{c.RESET}"
-        right1 = f"{c.BRIGHT_CYAN}[→]{c.RESET} {c.ORANGE}[{c.RESET}original MAC{c.ORANGE}]{c.RESET}:  {c.GRAY}[hidden]{c.RESET}"
+        right1 = f"{c.BRIGHT_CYAN}[→]{c.RESET} {c.ORANGE}[{c.RESET}original MAC{c.ORANGE}]{c.RESET}:  {c.GRAY}{original_mac}{c.RESET}"
 
         left1_plain = ansi_escape.sub('', left1)
         right1_plain = ansi_escape.sub('', right1)
