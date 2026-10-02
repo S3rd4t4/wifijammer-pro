@@ -1,5 +1,3 @@
-![img alt](img.png)
-
 # wifijammer-pro
 
 ### WiFi Deauthentication Tool for Penetration Testing
